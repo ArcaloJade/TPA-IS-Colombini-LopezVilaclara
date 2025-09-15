@@ -6,14 +6,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GiftCard {
-    // TODO: escribire los benditos mensajes de error
-    public String NotClaimed;
-    public String AlreadyClaimed;
-    public String ExpiredToken;
-    public String InvalidMerchantKey;
-    public String CannotChargeNegativeAmount;
-    public String CannotChargeMoreThanWhatItHas;
-    public String CannotHaveInitialNegativeBalance;
+    public String NotClaimed = "The gift card has not been claimed yet.";
+    public String AlreadyClaimed = "The gift card has already been claimed.";
+    public String ExpiredToken = "The token has expired.";
+    public String InvalidMerchantKey = "The merchant key provided is invalid.";
+    public String CannotChargeNegativeAmount = "Cannot charge a negative amount.";
+    public String CannotChargeMoreThanWhatItHas = "Cannot charge more than the current balance.";
+    public String CannotHaveInitialNegativeBalance = "The initial balance cannot be negative.";
 
     private final String id;
     private final String merchantKey;

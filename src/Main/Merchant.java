@@ -61,10 +61,11 @@ public class Merchant {
     }
 
     @Override
-    public int hashCode() { return Objects.hash(key); }
-
-    @Override
     public String toString() {
         return "Merchant{key='" + key + "', name='" + name + "', active=" + active + "}";
+    }
+
+    public void charge(GiftCard giftCard, int i) {
+        giftCard.charge(i, key);
     }
 }
