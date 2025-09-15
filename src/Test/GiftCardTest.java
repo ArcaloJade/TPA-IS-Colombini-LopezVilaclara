@@ -15,7 +15,7 @@ public class GiftCardTest {
 
     private static final String VALID_USER = "user-123"; // *** de momento es string
     private static final String VALID_MERCHANT_KEY = "MERCHANT-1"; // *** de momento es string
-    private static final String INVALID_MERCHANT_KEY = null;
+    private static final String INVALID_MERCHANT_KEY = "HACKER";
 
     private Token VALID_TOKEN;
     private GiftCard unclaimedCard;
@@ -35,37 +35,34 @@ public class GiftCardTest {
     }
 
     @Test public void test01CanNotChargeIfNotClaimed () {
-        assertThrowsLike( unclaimedCard.charge( 10, VALID_MERCHANT_KEY), unclaimedCard.NotClaimed);
+        assertThrowsLike( () -> unclaimedCard.charge( 10, VALID_MERCHANT_KEY), unclaimedCard.NotClaimed);
     }
 
     @Test public void test02CanNotsSeeLogIfNotClaimed () {
-        assertThrowsLike( unclaimedCard.getLog(VALID_TOKEN), unclaimedCard.NotClaimed);
+        assertThrowsLike( () -> unclaimedCard.getLog(VALID_TOKEN), unclaimedCard.NotClaimed);
     }
 
     @Test public void test03CanNotBeClaimedIfAlreadyClaimed () {
-        assertThrowsLike( claimedCard.claim(VALID_TOKEN), claimedCard.AlreadyClaimed); // *** que sea un boolean
+        assertThrowsLike( () -> claimedCard.claim(VALID_TOKEN), claimedCard.AlreadyClaimed); // *** que sea un boolean
     }
 
     @Test public void test04CannotBeUsedIfInvalidMerchantKey () {
-        assertThrowsLike( claimedCard.charge( 10, INVALID_MERCHANT_KEY), claimedCard.InvalidMerchantKey);
+        assertThrowsLike( () -> claimedCard.charge( 10, INVALID_MERCHANT_KEY), claimedCard.InvalidMerchantKey);
     }
 
     @Test public void test05CannotChargeNegativeAmount () {
-        assertThrowsLike( claimedCard.charge( -10, VALID_MERCHANT_KEY), claimedCard.CannotChargeNegativeAmount);
+        assertThrowsLike( () -> claimedCard.charge( -10, VALID_MERCHANT_KEY), claimedCard.CannotChargeNegativeAmount);
     }
 
     @Test public void test06CannotChargeMoreThanWhatItHas () {
-        assertThrowsLike( claimedCard.charge(claimedCardBalance + 10, VALID_MERCHANT_KEY),
+        assertThrowsLike( () -> claimedCard.charge(claimedCardBalance + 10, VALID_MERCHANT_KEY),
                 claimedCard.CannotChargeMoreThanWhatItHas);
-
     }
 
     @Test public void test07ChargeSuccessfulyLogsMovement () {
         assertEquals(new Movement(10), claimedCard.charge(10, VALID_MERCHANT_KEY)
                 .getLog(VALID_TOKEN)
                 .get(claimedCard.getLog(VALID_TOKEN).size() - 1));
-        //GetLog
-
     }
 
     @Test public void test06ChargeSuccessfulyUpdatesBalance() {
