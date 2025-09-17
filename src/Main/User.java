@@ -1,7 +1,7 @@
 package Main;
 
 import javax.smartcardio.Card;
-import java.awt.*;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -9,7 +9,8 @@ import java.util.Map;
 public class User {
     private final String username;
     private final String password;
-    private final Map<String, Card> giftCards = new LinkedHashMap<>();
+    private final List<Card> giftCards = new ArrayList<>();
+//    private final Map<String, Card> giftCards = new LinkedHashMap<>();
     // Ponerle una instancia de sistema tmb
     // id?
 
@@ -19,7 +20,7 @@ public class User {
     public User(String username, String password) {
         this.username = username;
         this.password = password;
-        this.giftCards = new ArrayList<>();
+//        this.giftCards = new ArrayList<>();
         this.merchantKey = null;
         this.token = null;
     }

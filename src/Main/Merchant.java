@@ -50,7 +50,7 @@ public class Merchant {
 
     public String getKey()   { return key; }
     public String getName()  { return name; }
-    public boolean isActive(){ return active; }
+    public boolean isActive() { return active; }
 
     @Override
     public boolean equals(Object o) {
@@ -68,4 +68,8 @@ public class Merchant {
     public void charge(GiftCard giftCard, int i) {
         giftCard.charge(i, key);
     }
+
+    @Override
+    public int hashCode() { return key.hashCode(); }
+
 }
