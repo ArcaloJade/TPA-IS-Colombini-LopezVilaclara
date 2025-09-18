@@ -54,10 +54,14 @@ public class GiftCardTest {
         assertThrowsLike( () -> claimedCard.charge( -10, VALID_MERCHANT_KEY), claimedCard.CannotChargeNegativeAmount);
     }
 
-    @Test public void test06CannotChargeMoreThanWhatItHas () {
-        assertThrowsLike( () -> claimedCard.charge(claimedCardBalance + 10, VALID_MERCHANT_KEY),
-                claimedCard.CannotChargeMoreThanWhatItHas);
+    @Test public void test06CannotChargeMoreThanWhatItHas() {
+        int realBalance = claimedCard.getBalance();  // usa el saldo actual del objeto
+        assertThrowsLike(
+                () -> claimedCard.charge(realBalance + 10, VALID_MERCHANT_KEY),
+                claimedCard.CannotChargeMoreThanWhatItHas
+        );
     }
+
 
     @Test public void test07ChargeSuccessfulyLogsMovement () {
         assertEquals(new Movement(10), claimedCard.charge(10, VALID_MERCHANT_KEY)
@@ -65,9 +69,12 @@ public class GiftCardTest {
                 .get(claimedCard.getLog(VALID_TOKEN).size() - 1));
     }
 
-    @Test public void test06ChargeSuccessfulyUpdatesBalance() {
-        assertEquals(unclaimedCard.getBalance() - 10, unclaimedCard.charge(10, VALID_MERCHANT_KEY).getBalance());
+    @Test public void test08ChargeSuccessfullyUpdatesBalance() {
+        int before = claimedCard.getBalance();
+        int after = claimedCard.charge(10, VALID_MERCHANT_KEY).getBalance();
+        assertEquals(before - 10, after);
     }
+
 
     private void assertThrowsLike(Executable executable, String message ) {
         assertEquals( message,
