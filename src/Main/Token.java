@@ -4,12 +4,10 @@ import java.time.LocalDateTime;
 
 public class Token {
 
-    private String user;
     private LocalDateTime creationTime;
     private LocalDateTime expirationTime;
 
-    public Token(String user, LocalDateTime creationTime) {
-        this.user = user;
+    public Token(LocalDateTime creationTime) {
         this.creationTime = creationTime;
         this.expirationTime = creationTime.plusMinutes(5); // 5 minutos de duración
     }
@@ -18,7 +16,4 @@ public class Token {
         return expirationTime.isBefore(LocalDateTime.now());
     }
 
-    public boolean isFromUser(String userQuery) {
-        return userQuery != null && userQuery.equals(this.user);
-    }
 }

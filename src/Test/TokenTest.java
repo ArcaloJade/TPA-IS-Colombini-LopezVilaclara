@@ -8,27 +8,16 @@ import java.time.LocalDateTime;
 public class TokenTest {
 
     @Test public void test01TokenIsExpiredAfterLimit() {
-        assertTrue( new Token("ArcaloJade", LocalDateTime.now().minusMinutes(10)).isExpired() );
+        assertTrue( new Token( LocalDateTime.now().minusMinutes(10)).isExpired() );
     }
 
     @Test public void test02TokenIsNotExpiredBeforeLimit() {
-        assertFalse( new Token("ArcaloJade", LocalDateTime.now() ).isExpired() );
+        assertFalse( new Token( LocalDateTime.now() ).isExpired() );
     }
 
-    @Test public void test03TokenBelongsToCreatorUser() {
-        assertTrue( new Token( "ArcaloJade", LocalDateTime.now() ).isFromUser( "ArcaloJade" ) );
-    }
 
-    @Test public void test04TokenDoesNotBelongToOtherUser() {
-        assertFalse( new Token( "ArcaloJade", LocalDateTime.now() ).isFromUser( "MojoJojo" ) );
-    }
-
-    @Test public void test05TokenExpiresExactlyAfterLimit() {
-        assertTrue(new Token("ArcaloJade", LocalDateTime.now().minusMinutes(5)).isExpired());
-    }
-
-    @Test public void test06TokenCannotBelongToNullUser() {
-        assertFalse(new Token("ArcaloJade", LocalDateTime.now()).isFromUser(null));
+    @Test public void test03TokenExpiresExactlyAfterLimit() {
+        assertTrue(new Token( LocalDateTime.now().minusMinutes(5)).isExpired());
     }
 
 }

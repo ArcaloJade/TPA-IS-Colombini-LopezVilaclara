@@ -25,7 +25,6 @@ public class GiftCardTest {
     @BeforeEach
     void setUp() {
         VALID_TOKEN = new Token(
-                VALID_USER,
                 LocalDateTime.now()
         );
 
