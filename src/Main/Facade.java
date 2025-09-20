@@ -37,8 +37,8 @@ public class Facade {
         GiftCard giftCard = giftCards.get(giftCardId);
         if (giftCard == null) throw new IllegalArgumentException("GiftCard not found");
 
-        giftCard.claim(token);
-        user.claimGiftCard(giftCard);
+        giftCard.claim(token, username);
+        //user.claimGiftCard(giftCard);
     }
 
     /** Merchant hace cargo a tarjeta */
@@ -51,15 +51,20 @@ public class Facade {
     }
 
     /** Consultar saldo y log de tarjeta */
-    public int getGiftCardBalance(String giftCardId) {
+    public long getGiftCardBalance(String giftCardId) {
         GiftCard giftCard = giftCards.get(giftCardId);
         if (giftCard == null) throw new IllegalArgumentException("GiftCard not found");
         return giftCard.getBalance();
     }
 
-    public List<Movement> getGiftCardLog(String giftCardId) {
+    public Map<Integer, Movement> getGiftCardLog(String giftCardId) {
         GiftCard giftCard = giftCards.get(giftCardId);
-        if (giftCard == null) throw new IllegalArgumentException("GiftCard not found");
-        return giftCard.getLog(giftCard.getBalance() >= 0 ? new Token(LocalDateTime.now()) : null); // simplificado
+        if (giftCard == null) {
+            throw new IllegalArgumentException("GiftCard not found");
+        }
+
+        return giftCard.getLog(
+                giftCard.getBalance() >= 0 ? new Token(LocalDateTime.now()) : null
+        );
     }
 }

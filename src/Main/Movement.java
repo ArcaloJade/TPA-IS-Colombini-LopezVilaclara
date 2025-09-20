@@ -3,13 +3,13 @@ package Main;
 import java.util.Objects;
 
 public class Movement {
-    private final int amount;
+    private final long amount;
 
-    public Movement(int amount) {
+    public Movement(long amount) {
         this.amount = amount;
     }
 
-    public int getAmount() {
+    public long getAmount() {
         return amount;
     }
 
@@ -19,11 +19,6 @@ public class Movement {
         if (!(o instanceof Movement)) return false;
         Movement movement = (Movement) o;
         return amount == movement.amount;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(amount);
     }
 
     @Override

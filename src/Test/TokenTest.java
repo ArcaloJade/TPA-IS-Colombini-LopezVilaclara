@@ -15,7 +15,6 @@ public class TokenTest {
         assertFalse( new Token( LocalDateTime.now() ).isExpired() );
     }
 
-
     @Test public void test03TokenExpiresExactlyAfterLimit() {
         assertTrue(new Token( LocalDateTime.now().minusMinutes(5)).isExpired());
     }

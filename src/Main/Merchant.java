@@ -6,7 +6,7 @@ public class Merchant {
     public static final String InactiveMerchant = "Merchant is inactive";
     public static final String EmptyName = "Name must not be empty";
 
-    private final String key; // identifica (lo que comparo en giftcard)
+    private final String key;
     private String name;
     private boolean active;
 
@@ -41,19 +41,12 @@ public class Merchant {
     public void deactivate() { this.active = false; }
     public void activate()   { this.active = true;  }
 
-    public void rename(String newName) {
-        if (newName == null || newName.isBlank()) {
-            throw new IllegalArgumentException(EmptyName);
-        }
-        this.name = newName.trim();
-    }
-
     public String getKey()   { return key; }
     public String getName()  { return name; }
     public boolean isActive() { return active; }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(Object o) { // SACAR??? ***
         if (this == o) return true;
         if (!(o instanceof Merchant)) return false;
         Merchant that = (Merchant) o;
@@ -65,11 +58,8 @@ public class Merchant {
         return "Merchant{key='" + key + "', name='" + name + "', active=" + active + "}";
     }
 
-    public void charge(GiftCard giftCard, int i) {
-        giftCard.charge(i, key);
+    public void charge(GiftCard giftCard, long amount) {
+        giftCard.charge(amount, key);
     }
-
-    @Override
-    public int hashCode() { return key.hashCode(); }
 
 }

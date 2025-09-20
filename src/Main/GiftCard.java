@@ -2,8 +2,7 @@ package Main;
 
 import org.junit.jupiter.api.function.Executable;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class GiftCard {
     public String NotClaimed = "The gift card has not been claimed yet.";
@@ -16,11 +15,13 @@ public class GiftCard {
 
     private final String id;
     private final String merchantKey;
-    private int balance;
+    private long balance;
     private boolean claimed;
-    private final List<Movement> log;
+    private String claimedBy; // ***
+    private final Map<Integer, Movement> log;
+    private int movementCounter;
 
-    public GiftCard(String id, int initialBalance, String merchantKey) {
+    public GiftCard(String id, long initialBalance, String merchantKey) {
         if (initialBalance < 0) {
             throw new IllegalArgumentException(CannotHaveInitialNegativeBalance);
         }
@@ -28,10 +29,12 @@ public class GiftCard {
         this.balance = initialBalance;
         this.merchantKey = merchantKey;
         this.claimed = false;
-        this.log = new ArrayList<>();
+        this.claimedBy = ""; //***
+        this.log = new HashMap<>();
+        this.movementCounter = 0;
     }
 
-    public void claim(Token validToken) {
+    public void claim(Token validToken, String username) {
         if (claimed) {
             throw new IllegalStateException(AlreadyClaimed);
         }
@@ -40,9 +43,11 @@ public class GiftCard {
         }
 
         this.claimed = true;
+        this.claimedBy = username; // ***
     }
 
-    public GiftCard charge(int amount, String merchantKey) {
+
+    public GiftCard charge(long amount, String merchantKey) {
         if (!claimed) {
             throw new IllegalStateException(NotClaimed);
         }
@@ -57,20 +62,26 @@ public class GiftCard {
         }
 
         this.balance -= amount;
-        this.log.add(new Movement(amount));
+        this.addMovement(new Movement(amount));
         return this;
     }
 
-    public ArrayList<Movement> getLog(Token validToken) {
+    public void addMovement(Movement m) {
+        log.put(++movementCounter, m);
+    }
+
+    public Map<Integer, Movement> getLog(Token token) {
         if (!claimed) {
             throw new IllegalStateException(NotClaimed);
         }
-        return new ArrayList<>(log);
+        return Collections.unmodifiableMap(log);
     }
 
-    public int getBalance() {
+    public long getBalance() {
         return balance;
     }
+
+    public String claimedBy() { return claimedBy;}
 
     public String getId() {
         return id;

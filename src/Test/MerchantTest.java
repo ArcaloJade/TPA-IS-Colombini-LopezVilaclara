@@ -21,60 +21,53 @@ public class MerchantTest {
         merchant = new Merchant(VALID_KEY, VALID_NAME);
     }
 
+    // 1) Camino feliz de construcción
     @Test public void test01CreatesActiveMerchantWithValidData() {
         Merchant m = new Merchant("K-123", "  Store X  ");
         assertEquals("K-123", m.getKey());
         assertEquals("Store X", m.getName()); // trimmed
         assertTrue(m.isActive());
-
     }
 
+    // 2) Validación de entrada: key inválido
     @Test public void test02FailsWhenKeyIsBlank() {
-        // crear merchant con key vacío o null y verificar excepción InvalidMerchantKey
         assertThrowsLike(() -> new Merchant("", "Store"), Merchant.InvalidMerchantKey);
         assertThrowsLike(() -> new Merchant(null, "Store"), Merchant.InvalidMerchantKey);
     }
 
+    // 3) Validación de entrada: nombre inválido
     @Test public void test03FailsWhenNameIsBlank() {
-        // crear merchant con nombre vacío o null y verificar excepción EmptyName
         assertThrowsLike(() -> new Merchant("K-123", ""), Merchant.EmptyName);
         assertThrowsLike(() -> new Merchant("K-123", null), Merchant.EmptyName);
     }
 
+    // 4) Método auxiliar simple: matchesKey
     @Test public void test04MatchesKeyReturnsTrueForSameKey() {
-        // verificar que matchesKey devuelve true con el mismo key y false con otro
         assertTrue(merchant.matchesKey(VALID_KEY));
         assertFalse(merchant.matchesKey("OTHER"));
     }
 
+    // 5) Validación de seguridad explícita
     @Test public void test05AssertValidKeyThrowsOnInvalidKey() {
-        // verificar que assertValidKey lanza SecurityException con InvalidMerchantKey
         assertDoesNotThrow(() -> merchant.assertValidKey(VALID_KEY));
         assertThrowsLike(() -> merchant.assertValidKey("OTHER"), Merchant.InvalidMerchantKey);
     }
 
+    // 6) Cambio de estado: desactivar
     @Test public void test06DeactivatePreventsOperations() {
-        // si desactivo merchant y luego assertActive debe lanzar InactiveMerchant
         merchant.deactivate();
         assertThrowsLike(() -> merchant.assertActive(), Merchant.InactiveMerchant);
     }
 
+    // 7) Cambio de estado: reactivar
     @Test public void test07ActivateRestoresOperations() {
-        // desactivar, reactivar y luego assertActive no debe lanzar exception
         merchant.deactivate();
         merchant.activate();
         assertDoesNotThrow(() -> merchant.assertActive());
     }
 
-    @Test public void test08RenameChangesNameAndValidates() {
-        // renombrar merchant y verificar cambio; renombrar vacío debe lanzar EmptyName
-        merchant.rename("New Name");
-        assertEquals("New Name", merchant.getName());
-        assertThrowsLike(() -> merchant.rename(""), Merchant.EmptyName);
-    }
-
-    @Test public void test09EqualityIsBasedOnKey() {
-        // merchants con mismo key son iguales, con distinto key no
+    // 8) Igualdad basada en key
+    @Test public void test08EqualityIsBasedOnKey() {
         Merchant m1 = new Merchant("K-123", "Store A");
         Merchant m2 = new Merchant("K-123", "Store B");
         Merchant m3 = new Merchant("K-456", "Store C");
@@ -83,24 +76,24 @@ public class MerchantTest {
         assertNotEquals(m1, m3);
     }
 
-    @Test public void test10HashCodeConsistentWithEquals() {
-        // merchants con mismo key deben tener el mismo hashCode
+    // 9) Consistencia de hashCode
+    @Test public void test09HashCodeConsistentWithEquals() {
         Merchant m1 = new Merchant("K-123", "Store A");
         Merchant m2 = new Merchant("K-123", "Store B");
 
         assertEquals(m1.hashCode(), m2.hashCode());
     }
 
-    @Test public void test11ToStringContainsKeyNameAndActive() {
-        // verificar que toString contiene key, name y estado activo/inactivo (info)
+    // 10) Representación en String
+    @Test public void test10ToStringContainsKeyNameAndActive() {
         String repr = merchant.toString();
         assertTrue(repr.contains(merchant.getKey()));
         assertTrue(repr.contains(merchant.getName()));
         assertTrue(repr.contains(String.valueOf(merchant.isActive())));
-
     }
 
-    @Test public void test12CannotChargeUnclaimedCardThroughMerchant() {
+    // 11) Integración con GiftCard
+    @Test public void test11CannotChargeUnclaimedCardThroughMerchant() {
         GiftCard unclaimed = new GiftCard("CARD-X", 1000, merchant.getKey());
         assertThrowsLike(() -> merchant.charge(unclaimed, 10), unclaimed.NotClaimed);
     }
@@ -112,4 +105,5 @@ public class MerchantTest {
         );
     }
 }
+
 
