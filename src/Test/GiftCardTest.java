@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -20,7 +21,7 @@ public class GiftCardTest {
     private Token VALID_TOKEN;
     private GiftCard unclaimedCard;
     private GiftCard claimedCard;
-    private int claimedCardBalance = 1000; // *** deberia ser int plata?
+    private int claimedCardBalance = 1000;
 
     @BeforeEach
     void setUp() {
@@ -66,6 +67,15 @@ public class GiftCardTest {
         );
     }
 
+    @Test public void test06aCannotChargeIfBalanceWouldBeNegativeAfterwards() {
+        long remaining = claimedCard.getBalance();
+
+        assertThrowsLike(
+                () -> claimedCard.charge(remaining + 1, VALID_MERCHANT_KEY),
+                claimedCard.CannotChargeMoreThanWhatItHas
+        );
+    }
+
     // 7) Camino feliz: efecto en estado (saldo)
     @Test public void test08ChargeSuccessfullyUpdatesBalance() {
         long before = claimedCard.getBalance();
@@ -75,9 +85,12 @@ public class GiftCardTest {
 
     // 8) Camino feliz: efecto colateral (log)
     @Test public void test07ChargeSuccessfulyLogsMovement () {
-        assertEquals(new Movement(10), claimedCard.charge(10, VALID_MERCHANT_KEY)
-                .getLog(VALID_TOKEN)
-                .get(claimedCard.getLog(VALID_TOKEN).size() - 1));
+        assertEquals(
+                new Movement(10),
+                claimedCard.charge(10, VALID_MERCHANT_KEY)
+                        .getLog(VALID_TOKEN)
+                        .get(Collections.max(claimedCard.getLog(VALID_TOKEN).keySet()))
+        );
     }
 
     private void assertThrowsLike(Executable executable, String message ) {

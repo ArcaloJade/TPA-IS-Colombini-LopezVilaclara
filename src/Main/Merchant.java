@@ -54,6 +54,11 @@ public class Merchant {
     }
 
     @Override
+    public int hashCode() {
+        return key.hashCode();
+    }
+
+    @Override
     public String toString() {
         return "Merchant{key='" + key + "', name='" + name + "', active=" + active + "}";
     }
