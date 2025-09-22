@@ -15,7 +15,6 @@ public class Facade {
         preMerchants.forEach(m -> merchants.put(m.getKey(), m));
     }
 
-    /** Login: valida username/password y genera token */
     public Token login(String username, String password) {
         User user = users.get(username);
         if (user == null || !user.matchesPassword(password)) {
@@ -26,7 +25,6 @@ public class Facade {
         return token;
     }
 
-    /** Reclamar una gift card */
     public void claimGiftCard(String username, String giftCardId) {
         User user = users.get(username);
         if (user == null) throw new IllegalArgumentException("Unknown user");
@@ -38,10 +36,9 @@ public class Facade {
         if (giftCard == null) throw new IllegalArgumentException("GiftCard not found");
 
         giftCard.claim(token, username);
-        //user.claimGiftCard(giftCard);
+        user.claimGiftCard(giftCard);
     }
 
-    /** Merchant hace cargo a tarjeta */
     public void chargeGiftCard(String giftCardId, String merchantKey, int amount) {
         GiftCard giftCard = giftCards.get(giftCardId);
         Merchant merchant = merchants.get(merchantKey);
@@ -50,7 +47,6 @@ public class Facade {
         merchant.charge(giftCard, amount);
     }
 
-    /** Consultar saldo y log de tarjeta */
     public long getGiftCardBalance(String giftCardId) {
         GiftCard giftCard = giftCards.get(giftCardId);
         if (giftCard == null) throw new IllegalArgumentException("GiftCard not found");

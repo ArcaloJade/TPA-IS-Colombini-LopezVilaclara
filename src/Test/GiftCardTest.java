@@ -33,34 +33,28 @@ public class GiftCardTest {
         claimedCard.claim(VALID_TOKEN, VALID_USER);
     }
 
-    // 1) Validación de entrada simple
     @Test public void test01CannotChargeNegativeAmount () {
         assertThrowsLike( () -> claimedCard.charge( -10, VALID_MERCHANT_KEY), claimedCard.CannotChargeNegativeAmount);
     }
 
-    // 2) Precondición de estado: no reclamada
     @Test public void test02CanNotChargeIfNotClaimed () {
         assertThrowsLike( () -> unclaimedCard.charge( 10, VALID_MERCHANT_KEY), unclaimedCard.NotClaimed);
     }
 
-    // 3) Otra operación bloqueada por estado: no reclamada
     @Test public void test03CanNotsSeeLogIfNotClaimed () {
         assertThrowsLike( () -> unclaimedCard.getLog(VALID_TOKEN), unclaimedCard.NotClaimed);
     }
 
-    // 4) Guard de idempotencia/estado
     @Test public void test04CanNotBeClaimedIfAlreadyClaimed () {
         assertThrowsLike( () -> claimedCard.claim(VALID_TOKEN, VALID_USER), claimedCard.AlreadyClaimed); // *** que sea un boolean
     }
 
-    // 5) Validación de autorización simple
     @Test public void test05CannotBeUsedIfInvalidMerchantKey () {
         assertThrowsLike( () -> claimedCard.charge( 10, INVALID_MERCHANT_KEY), claimedCard.InvalidMerchantKey);
     }
 
-    // 6) Regla de negocio dependiente de saldo
     @Test public void test06CannotChargeMoreThanWhatItHas() {
-        long realBalance = claimedCard.getBalance();  // usa el saldo actual del objeto
+        long realBalance = claimedCard.getBalance();
         assertThrowsLike(
                 () -> claimedCard.charge(realBalance + 10, VALID_MERCHANT_KEY),
                 claimedCard.CannotChargeMoreThanWhatItHas
@@ -76,14 +70,12 @@ public class GiftCardTest {
         );
     }
 
-    // 7) Camino feliz: efecto en estado (saldo)
     @Test public void test08ChargeSuccessfullyUpdatesBalance() {
         long before = claimedCard.getBalance();
         long after = claimedCard.charge(10, VALID_MERCHANT_KEY).getBalance();
         assertEquals(before - 10, after);
     }
 
-    // 8) Camino feliz: efecto colateral (log)
     @Test public void test09ChargeSuccessfullyLogsMovement () {
         assertEquals(
                 new Movement(10),

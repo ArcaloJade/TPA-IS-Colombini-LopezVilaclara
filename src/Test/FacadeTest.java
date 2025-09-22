@@ -33,7 +33,6 @@ public class FacadeTest {
     }
 
     @Test public void test01SeedsAreLoaded() {
-        // podemos login & consultar por ids post construir
         assertDoesNotThrow(() -> facade.login("roma", "pa$$"));
         assertEquals(1000, facade.getGiftCardBalance("CARD-1"));
     }

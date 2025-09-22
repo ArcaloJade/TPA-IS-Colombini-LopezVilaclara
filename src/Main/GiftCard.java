@@ -81,7 +81,7 @@ public class GiftCard {
         return balance;
     }
 
-    public String claimedBy() { return claimedBy;}
+    public String claimedBy() { return claimedBy; }
 
     public String getId() {
         return id;
