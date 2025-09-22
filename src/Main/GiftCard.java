@@ -17,7 +17,7 @@ public class GiftCard {
     private final String merchantKey;
     private long balance;
     private boolean claimed;
-    private String claimedBy; // ***
+    private String claimedBy;
     private final Map<Integer, Movement> log;
     private int movementCounter;
 
@@ -29,7 +29,7 @@ public class GiftCard {
         this.balance = initialBalance;
         this.merchantKey = merchantKey;
         this.claimed = false;
-        this.claimedBy = ""; //***
+        this.claimedBy = "";
         this.log = new HashMap<>();
         this.movementCounter = 0;
     }
@@ -43,7 +43,7 @@ public class GiftCard {
         }
 
         this.claimed = true;
-        this.claimedBy = username; // ***
+        this.claimedBy = username;
     }
 
 

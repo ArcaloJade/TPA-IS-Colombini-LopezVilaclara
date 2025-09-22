@@ -46,7 +46,7 @@ public class Merchant {
     public boolean isActive() { return active; }
 
     @Override
-    public boolean equals(Object o) { // SACAR??? ***
+    public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Merchant)) return false;
         Merchant that = (Merchant) o;

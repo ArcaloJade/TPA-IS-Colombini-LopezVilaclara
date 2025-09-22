@@ -21,40 +21,40 @@ public class GiftCardTest {
     private Token VALID_TOKEN;
     private GiftCard unclaimedCard;
     private GiftCard claimedCard;
-    private int claimedCardBalance = 1000;
+    private int unclaimedCardBalance = 1000;
 
     @BeforeEach
     void setUp() {
         VALID_TOKEN = new Token(
                 LocalDateTime.now()
         );
-        unclaimedCard = new GiftCard("CARD-1", claimedCardBalance, VALID_MERCHANT_KEY);
+        unclaimedCard = new GiftCard("CARD-1", unclaimedCardBalance, VALID_MERCHANT_KEY);
         claimedCard = new GiftCard("CARD-2", 2000, VALID_MERCHANT_KEY);
         claimedCard.claim(VALID_TOKEN, VALID_USER);
     }
 
     // 1) Validación de entrada simple
-    @Test public void test05CannotChargeNegativeAmount () {
+    @Test public void test01CannotChargeNegativeAmount () {
         assertThrowsLike( () -> claimedCard.charge( -10, VALID_MERCHANT_KEY), claimedCard.CannotChargeNegativeAmount);
     }
 
     // 2) Precondición de estado: no reclamada
-    @Test public void test01CanNotChargeIfNotClaimed () {
+    @Test public void test02CanNotChargeIfNotClaimed () {
         assertThrowsLike( () -> unclaimedCard.charge( 10, VALID_MERCHANT_KEY), unclaimedCard.NotClaimed);
     }
 
     // 3) Otra operación bloqueada por estado: no reclamada
-    @Test public void test02CanNotsSeeLogIfNotClaimed () {
+    @Test public void test03CanNotsSeeLogIfNotClaimed () {
         assertThrowsLike( () -> unclaimedCard.getLog(VALID_TOKEN), unclaimedCard.NotClaimed);
     }
 
     // 4) Guard de idempotencia/estado
-    @Test public void test03CanNotBeClaimedIfAlreadyClaimed () {
+    @Test public void test04CanNotBeClaimedIfAlreadyClaimed () {
         assertThrowsLike( () -> claimedCard.claim(VALID_TOKEN, VALID_USER), claimedCard.AlreadyClaimed); // *** que sea un boolean
     }
 
     // 5) Validación de autorización simple
-    @Test public void test04CannotBeUsedIfInvalidMerchantKey () {
+    @Test public void test05CannotBeUsedIfInvalidMerchantKey () {
         assertThrowsLike( () -> claimedCard.charge( 10, INVALID_MERCHANT_KEY), claimedCard.InvalidMerchantKey);
     }
 
@@ -67,7 +67,7 @@ public class GiftCardTest {
         );
     }
 
-    @Test public void test06aCannotChargeIfBalanceWouldBeNegativeAfterwards() {
+    @Test public void test07aCannotChargeIfBalanceWouldBeNegativeAfterwards() {
         long remaining = claimedCard.getBalance();
 
         assertThrowsLike(
@@ -84,7 +84,7 @@ public class GiftCardTest {
     }
 
     // 8) Camino feliz: efecto colateral (log)
-    @Test public void test07ChargeSuccessfulyLogsMovement () {
+    @Test public void test09ChargeSuccessfullyLogsMovement () {
         assertEquals(
                 new Movement(10),
                 claimedCard.charge(10, VALID_MERCHANT_KEY)

@@ -32,122 +32,104 @@ public class FacadeTest {
         );
     }
 
-    @Test
-    void test01SeedsAreLoaded() {
+    @Test public void test01SeedsAreLoaded() {
         // podemos login & consultar por ids post construir
         assertDoesNotThrow(() -> facade.login("roma", "pa$$"));
         assertEquals(1000, facade.getGiftCardBalance("CARD-1"));
     }
 
-    @Test
-    void test02LoginSuccessAssignsToken() {
+    @Test public void test02LoginSuccessAssignsToken() {
         Token t = facade.login("roma", "pa$$");
         assertNotNull(t);
     }
 
-    @Test
-    void test03LoginFailsUnknownUser() {
+    @Test public void test03LoginFailsUnknownUser() {
         assertThrows(SecurityException.class, () -> facade.login("messi", "franciasegundo"));
     }
 
-    @Test
-    void test04LoginFailsWrongPassword() {
+    @Test public void test04LoginFailsWrongPassword() {
         assertThrows(SecurityException.class, () -> facade.login("roma", "wrong"));
     }
 
-    void test05ClaimGiftCardHappyPath() {
-        facade.login("roma", "pa$$");
-        assertDoesNotThrow(() -> facade.claimGiftCard("roma", "CARD-1"));
+    @Test public void test05ClaimGiftCardHappyPath() {
+        assertDoesNotThrow(() -> loginAndClaim("roma", "pa$$", "CARD-1"));
         assertEquals(cardA.claimedBy(), "roma");
     }
 
-    @Test
-    void test06ClaimGiftCardFailsUnknownUser() {
+    @Test public void test06ClaimGiftCardFailsUnknownUser() {
         assertThrows(IllegalArgumentException.class, () -> facade.claimGiftCard("messi", "CARD-1"));
     }
 
-    @Test
-    void test07ClaimGiftCardFailsWithoutLogin() {
+    @Test public void test07ClaimGiftCardFailsWithoutLogin() {
         assertThrows(SecurityException.class, () -> facade.claimGiftCard("roma", "CARD-1"));
     }
 
-    @Test
-    void test08ClaimGiftCardFailsUnknownCard() {
+    @Test public void test08ClaimGiftCardFailsUnknownCard() {
         facade.login("roma", "pa$$");
         assertThrows(IllegalArgumentException.class, () -> facade.claimGiftCard("roma", "NADA"));
     }
 
-    @Test
-    void test09CannotClaimAlreadyClaimedByAnotherUser() { // ***
+    @Test public void test09CannotClaimAlreadyClaimedByAnotherUser() {
         User bob = new User("bob", "1234");
-
         facade = new Facade(
                 List.of(roma, bob),
                 List.of(cardA),
                 List.of(shop)
         );
-
-        facade.login("bob", "1234");
-        facade.claimGiftCard("bob", "CARD-1");
-
+        loginAndClaim("bob", "1234", "CARD-1");
         facade.login("roma", "pa$$");
         assertThrows(IllegalStateException.class, () -> facade.claimGiftCard("roma", "CARD-1"));
-    } // ***
+    }
 
-    @Test
-    void test10ChargeFailsWithUnknownMerchant() {
+    @Test public void test10ChargeFailsWithUnknownMerchant() {
         assertThrows(SecurityException.class, () -> facade.chargeGiftCard("CARD-1", "NOMERCHANT", 100));
     }
 
-    @Test
-    void test11ChargeFailsWhenCardNotClaimed() {
-        // TODO !!!!!!
+    @Test public void test11ChargeFailsWhenCardNotClaimed() {
+        facade.login("roma", "pa$$");
+        assertThrows(IllegalStateException.class,
+                () -> facade.chargeGiftCard("CARD-1", "SHOP-1", 100));
     }
 
-    @Test
-    void test12ChargeHappyPathAfterClaim() {
-        facade.login("roma", "pa$$");
-        facade.claimGiftCard("roma", "CARD-1");
+    @Test public void test12ChargeHappyPathAfterClaim() {
+        loginAndClaim("roma", "pa$$", "CARD-1");
         assertDoesNotThrow(() -> facade.chargeGiftCard("CARD-1", "SHOP-1", 100));
         assertEquals(900, facade.getGiftCardBalance("CARD-1"));
     }
 
-    @Test
-    void test13ChargeFailsWithInvalidAmount() {
-        facade.login("roma", "pa$$");
-        facade.claimGiftCard("roma", "CARD-1");
-
+    @Test public void test13ChargeFailsWithInvalidAmount() {
+        loginAndClaim("roma", "pa$$", "CARD-1");
         assertThrows(IllegalArgumentException.class, () -> facade.chargeGiftCard("CARD-1", "SHOP-1", 0));
         assertThrows(IllegalArgumentException.class, () -> facade.chargeGiftCard("CARD-1", "SHOP-1", -5));
     }
 
-    @Test
-    void test14ChargeFailsUnknownCard() {
+    @Test public void test14ChargeFailsUnknownCard() {
         assertThrows(NullPointerException.class, () -> facade.chargeGiftCard("NOPE", "SHOP-1", 50));
     }
 
-    @Test
-    void test15GetBalanceHappyPath() {
+    @Test public void test15GetBalanceHappyPath() {
         assertEquals(1000, facade.getGiftCardBalance("CARD-1"));
     }
 
-    @Test
-    void test16GetBalanceFailsUnknownCard() {
+    @Test public void test16GetBalanceFailsUnknownCard() {
         assertThrows(IllegalArgumentException.class, () -> facade.getGiftCardBalance("NOPE"));
     }
 
-    @Test
-    void test17GetLogHappyPathReturnsMap() {
-        facade.login("roma", "pa$$");
-        facade.claimGiftCard("roma", "CARD-1");
+    @Test public void test17GetLogHappyPathReturnsMap() {
+        loginAndClaim("roma", "pa$$", "CARD-1");
         Map<Integer, Movement> log = facade.getGiftCardLog("CARD-1");
         assertNotNull(log);
         assertEquals(0, log.size());
     }
 
-    @Test
-    void test18GetLogFailsUnknownCard() {
+    @Test public void test18GetLogFailsUnknownCard() {
         assertThrows(IllegalArgumentException.class, () -> facade.getGiftCardLog("NOPE"));
     }
+
+    private void loginAndClaim(String username, String password, String cardId) {
+        facade.login(username, password);
+        facade.claimGiftCard(username, cardId);
+    }
+
 
 }
